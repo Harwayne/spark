@@ -16,6 +16,8 @@
  */
 package org.apache.spark.deploy.k8s.features
 
+import io.fabric8.kubernetes.api.model.PodSpec
+
 import org.scalatest.BeforeAndAfter
 
 import org.apache.spark.{SparkConf, SparkFunSuite}
@@ -45,9 +47,7 @@ class ExecutorKubernetesCredentialsFeatureStepSuite extends SparkFunSuite with B
       .pod
       .getSpec
 
-    val serviceAccountName = spec.getServiceAccountName
-    val accountName = spec.getServiceAccount
-    assertSAName(serviceAccountName, accountName)
+    assertSAName("executor-name", spec)
   }
 
   test("configure spark pod with with driver service account " +
@@ -59,9 +59,7 @@ class ExecutorKubernetesCredentialsFeatureStepSuite extends SparkFunSuite with B
       .pod
       .getSpec
 
-    val serviceAccountName = spec.getServiceAccountName
-    val accountName = spec.getServiceAccount
-    assertSAName(serviceAccountName, accountName)
+    assertSAName("driver-name", spec)
   }
 
   test("configure spark pod with with driver service account " +
@@ -75,13 +73,11 @@ class ExecutorKubernetesCredentialsFeatureStepSuite extends SparkFunSuite with B
       .pod
       .getSpec
 
-    val serviceAccountName = spec.getServiceAccountName
-    val accountName = spec.getServiceAccount
-    assertSAName(serviceAccountName, accountName)
+    assertSAName("executor-name", spec)
   }
 
-  def assertSAName(serviceAccountName: String, accountName: String): Unit = {
-    assert(serviceAccountName.equals(serviceAccountName))
-    assert(accountName.equals(accountName))
+  def assertSAName(expectedServiceAccountName: String, podSpec: PodSpec): Unit = {
+    assert(expectedServiceAccountName.equals(podSpec.getServiceAccountName))
+    assert(expectedServiceAccountName.equals(podSpec.getServiceAccount))
   }
 }
